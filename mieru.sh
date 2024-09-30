@@ -251,15 +251,11 @@ menu() {
     
     echo -e " ${GREEN}1.${PLAIN} 安装 mieru"
     echo -e " ${GREEN}2.${PLAIN} 卸载 mieru"
-    echo " -------------"
     echo -e " ${GREEN}3.${PLAIN} 重启 mieru"
     echo -e " ${GREEN}4.${PLAIN} 修改 mieru"
     echo -e " ${GREEN}5.${PLAIN} 显示 mieru"
-    echo " -------------"
-    echo -e " ${GREEN}0.${PLAIN} 退出"
-    echo ""
-    
-    read -rp "请输入选项 [0-5]: " menuInput
+    echo -e " ${GREEN}0.${PLAIN} 退出"   
+    read -rp "请输入选项编号: " menuInput
     case $menuInput in
         1 ) inst_mita ;;
         2 ) unst_mita ;;
