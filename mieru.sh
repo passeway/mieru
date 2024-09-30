@@ -172,81 +172,42 @@ EOF
     mita apply config server_config.json
     rm -f server_config.json
 
-    warpv6=$(curl -s6m5 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-    warpv4=$(curl -s4m5 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
-    if [[ $warpv4 =~ on|plus || $warpv6 =~ on|plus ]]; then
-        wg-quick down wgcf >/dev/null 2>&1
-        systemctl stop warp-go >/dev/null 2>&1
-        check_ip
-        systemctl start warp-go >/dev/null 2>&1
-        wg-quick up wgcf >/dev/null 2>&1
-    else
-        check_ip
-    fi
-
-    [[ -z $ipv4 ]] && ip=$ipv6 || ip=$ipv4
-
-    rm -rf /root/mieru
-    mkdir /root/mieru >/dev/null 2>&1
-    cat <<EOF > /root/mieru/client_config.json
-{
-    "profiles": [
-        {
-            "profileName": "default",
-            "user": {
-                "name": "$user_name",
-                "password": "$auth_pass"
-            },
-            "servers": [
-                {
-                    "ipAddress": "$ip",
-                    "domainName": "",
-                    "portBindings": [
-                        {
-                            "port": $port,
-                            "protocol": "TCP"
-                        }
-                    ]
-                }
-            ],
-            "mtu": 1400
-        }
-    ],
-    "activeProfile": "default",
-    "rpcPort": 8964,
-    "socks5Port": 3080,
-    "loggingLevel": "INFO"
-}
-EOF
+    warpv6=$(curl -s6m5 https://www.cloudflare.com/cdn-cgi/trace | grep -w "warp" | awk -F '=' '{print $2}')
+    [[ $warpv6 == "on" ]] && echo -e "${YELLOW}当前处于Warp环境下，建议使用其他VPS进行安装，可能会影响代理服务${PLAIN}" && sleep 5
 
     mita start
-    result=$(mita status)
-
-    if [[ $result =~ "mita server status is \"RUNNING\"" ]]; then
-        green "mieru 服务安装成功！"
-    else
-        red "mieru 服务启动失败，脚本退出！" && exit 1
-    fi
-    yellow "客户端配置如下，并已保存至 /root/mieru/client_config.json"
-    red "$(cat /root/mieru/client_config.json)\n"
+    green "配置成功，服务已经启动！"
 }
 
 show_conf(){
-    yellow "客户端配置如下，并已保存至 /root/mieru/client_config.json"
-    red "$(cat /root/mieru/client_config.json)\n"
+    if [[ ! -f /usr/local/bin/mita ]]; then
+        red "未检测到mita程序！"
+    else
+        yellow "当前 mieru 配置："
+        echo -e "$(cat server_config.json | jq .)"
+    fi
 }
 
 menu() {
     clear
+    echo -e "${GREEN}=== mieru 管理工具 ===${PLAIN}"
+    
+    # 直接显示安装状态和运行状态
+    echo -e "安装状态: $(if command -v mita >/dev/null 2>&1; then echo -e "${GREEN}已安装${PLAIN}"; else echo -e "${RED}未安装${PLAIN}"; fi)"
+    
+    result=$(mita status 2>/dev/null)
+    echo -e "运行状态: $(if [[ $result =~ "mita server status is \"RUNNING\"" ]]; then echo -e "${GREEN}已运行${PLAIN}"; else echo -e "${RED}未运行${PLAIN}"; fi)"
+    
     echo -e " ${GREEN}1.${PLAIN} 安装 mieru"
     echo -e " ${GREEN}2.${PLAIN} ${RED}卸载 mieru${PLAIN}"
     echo " -------------"
-    echo -e " ${GREEN}3.${PLAIN} 关闭、开启、重启 mieru"
-    echo -e " ${GREEN}4.${PLAIN} 修改 mieru 配置"
-    echo -e " ${GREEN}5.${PLAIN} 显示 mieru 配置文件"
+    echo -e " ${GREEN}3.${PLAIN} 重启 mieru"
+    echo -e " ${GREEN}4.${PLAIN} 修改 mieru"
+    echo -e " ${GREEN}5.${PLAIN} 显示 mieru"
     echo " -------------"
-    echo -e " ${GREEN}0.${PLAIN} 退出脚本"
+    echo -e " ${GREEN}0.${PLAIN} 退出"
     echo ""
+    
     read -rp "请输入选项 [0-5]: " menuInput
     case $menuInput in
         1 ) inst_mita ;;
@@ -258,4 +219,6 @@ menu() {
     esac
 }
 
-menu
+while true; do
+    menu
+done
