@@ -156,7 +156,7 @@ edit_conf(){
     "portBindings": [
         {
             "port": $port,
-            "protocol": "UDP"
+            "protocol": "TCP"
         }
     ],
     "users": [
@@ -205,7 +205,7 @@ EOF
                     "portBindings": [
                         {
                             "port": $port,
-                            "protocol": "UDP"
+                            "protocol": "TCP"
                         }
                     ]
                 }
