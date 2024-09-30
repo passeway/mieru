@@ -156,7 +156,7 @@ edit_conf(){
     "portBindings": [
         {
             "port": $port,
-            "protocol": "TCP"
+            "protocol": "udp"
         }
     ],
     "users": [
@@ -205,7 +205,7 @@ EOF
                     "portBindings": [
                         {
                             "port": $port,
-                            "protocol": "TCP"
+                            "protocol": "udp"
                         }
                     ]
                 }
@@ -250,13 +250,13 @@ menu() {
     echo -e "运行状态: $(if [[ $result =~ "mita server status is \"RUNNING\"" ]]; then echo -e "${GREEN}已运行${PLAIN}"; else echo -e "${RED}未运行${PLAIN}"; fi)"
     
     echo -e " ${GREEN}1.${PLAIN} 安装 mieru"
-    echo -e " ${GREEN}2.${PLAIN} ${RED}卸载 mieru${PLAIN}"
+    echo -e " ${GREEN}2.${PLAIN} 卸载 mieru"
     echo " -------------"
-    echo -e " ${GREEN}3.${PLAIN} 关闭、开启、重启 mieru"
-    echo -e " ${GREEN}4.${PLAIN} 修改 mieru 配置"
-    echo -e " ${GREEN}5.${PLAIN} 显示 mieru 配置文件"
+    echo -e " ${GREEN}3.${PLAIN} 重启 mieru"
+    echo -e " ${GREEN}4.${PLAIN} 修改 mieru"
+    echo -e " ${GREEN}5.${PLAIN} 显示 mieru"
     echo " -------------"
-    echo -e " ${GREEN}0.${PLAIN} 退出脚本"
+    echo -e " ${GREEN}0.${PLAIN} 退出"
     echo ""
     
     read -rp "请输入选项 [0-5]: " menuInput
