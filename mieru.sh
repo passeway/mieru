@@ -100,22 +100,22 @@ mita_switch(){
 edit_conf(){
     mita stop
 
-    read -p "设置 mieru 端口 [1-65535]（回车则随机分配端口）：" port
+    read -p "设置 mieru 端口（回车则随机分配端口）：" port
     [[ -z $port ]] && port=$(shuf -i 2000-65535 -n 1)
     until [[ -z $(ss -ntlp | awk '{print $4}' | sed 's/.*://g' | grep -w "$port") ]]; do
         if [[ -n $(ss -ntlp | awk '{print $4}' | sed 's/.*://g' | grep -w "$port") ]]; then
             echo -e "${RED} $port ${PLAIN} 端口已经被其他程序占用，请更换端口重试！"
-            read -p "设置 mieru 端口 [1-65535]（回车则随机分配端口）：" port
+            read -p "设置 mieru 端口（回车则随机分配端口）：" port
             [[ -z $port ]] && port=$(shuf -i 2000-65535 -n 1)
         fi
     done
     yellow "将在 mieru 代理节点使用的端口为：$port"
 
-    read -rp "请输入 mieru 代理认证用户名 [留空随机生成]：" user_name
+    read -rp "请输入 mieru 代理认证用户名（回车则随机生成）：" user_name
     [[ -z $user_name ]] && user_name=$(date +%s%N | md5sum | cut -c 1-8)
     yellow "将在 mieru 代理节点使用的用户名为：$user_name"
 
-    read -rp "请输入 mieru 代理认证密码 [留空随机生成]：" auth_pass
+    read -rp "请输入 mieru 代理认证密码 （回车则随机生成）：" auth_pass
     [[ -z $auth_pass ]] && auth_pass=$(date +%s%N | md5sum | cut -c 1-8)
     yellow "将在 mieru 代理节点使用的密码为：$auth_pass"
 
@@ -215,7 +215,7 @@ EOF
     ],
     "activeProfile": "default",
     "rpcPort": 8964,
-    "socks5Port": 3080,
+    "socks5Port": 1080,
     "loggingLevel": "INFO"
 }
 EOF
@@ -228,13 +228,13 @@ EOF
     else
         red "mieru 服务启动失败，脚本退出！" && exit 1
     fi
-    yellow "客户端配置如下，并已保存至 /root/mieru/client_config.json"
+    yellow "客户端配置已保存至 /root/mieru/client_config.json"
     red "$(cat /root/mieru/client_config.json)\n"
     read -rp "按回车键返回主菜单..."
 }
 
 show_conf(){
-    yellow "客户端配置如下，并已保存至 /root/mieru/client_config.json"
+    yellow "客户端配置已保存至 /root/mieru/client_config.json"
     red "$(cat /root/mieru/client_config.json)\n"
     read -rp "按回车键返回主菜单..."
 }
@@ -248,13 +248,14 @@ menu() {
     
     result=$(mita status 2>/dev/null)
     echo -e "运行状态: $(if [[ $result =~ "mita server status is \"RUNNING\"" ]]; then echo -e "${GREEN}已运行${PLAIN}"; else echo -e "${RED}未运行${PLAIN}"; fi)"
-    
+    echo -e " "
     echo -e " ${GREEN}1.${PLAIN} 安装 mieru"
     echo -e " ${GREEN}2.${PLAIN} 卸载 mieru"
     echo -e " ${GREEN}3.${PLAIN} 重启 mieru"
     echo -e " ${GREEN}4.${PLAIN} 修改 mieru"
     echo -e " ${GREEN}5.${PLAIN} 显示 mieru"
-    echo -e " ${GREEN}0.${PLAIN} 退出"   
+    echo -e " ${GREEN}0.${PLAIN} 退出"  
+    echo -e "${GREEN}======================${PLAIN}" 
     read -rp "请输入选项编号: " menuInput
     case $menuInput in
         1 ) inst_mita ;;
