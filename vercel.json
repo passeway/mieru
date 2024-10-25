@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://raw.githubusercontent.com/passeway/mieru/refs/heads/main/mieru.sh",
+      "permanent": true
+    }
+  ]
+}
