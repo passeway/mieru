@@ -5,7 +5,7 @@
 
 ## 一键脚本
 ```
-bash <(curl -fsSL mieru.vercel.app)
+bash <(curl -fsSL mieru-ten.vercel.app)
 ```
 ## 详细说明
 - 提供 socks5, HTTP 和 HTTPS 代理接口。
